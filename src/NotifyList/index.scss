@@ -1,0 +1,13 @@
+.notify-list-table {
+  width: max-content;
+
+  @media all and (max-width: 900px) {
+    td:first-child,
+    th:first-child {
+      position: sticky!important;
+      left: 0;
+      z-index: 2!important;
+      max-width: 200px;
+    }
+  }
+}
