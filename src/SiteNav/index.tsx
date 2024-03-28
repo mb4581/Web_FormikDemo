@@ -1,27 +1,24 @@
 import { useLocation } from "react-router-dom";
-import { Container, Nav, Navbar } from "react-bootstrap";
-import { LinkContainer } from "react-router-bootstrap";
+import { Button, Navbar } from "react-bootstrap";
+import { SiteDrawer } from "./SiteDrawer.tsx";
+import React from "react";
 
 export function SiteNav() {
   const location = useLocation();
-  console.log(location);
+  const [open, setOpen] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    setOpen(false);
+  }, [location])
 
   return (
     <Navbar expand="lg" data-bs-theme="dark" bg="dark">
-      <Container>
-        <Nav>
-          <LinkContainer to="/">
-            <Nav.Link>
-              Notifications
-            </Nav.Link>
-          </LinkContainer>
-          <LinkContainer to="/send">
-            <Nav.Link>
-              Send notification
-            </Nav.Link>
-          </LinkContainer>
-        </Nav>
-      </Container>
+      <SiteDrawer open={open} onClose={() => setOpen(false)} />
+      <div style={{margin: "0 16px"}}>
+        <Button variant="outline-light" onClick={() => setOpen(true)}>
+          Menu
+        </Button>
+      </div>
     </Navbar>
   )
 }

@@ -1,4 +1,3 @@
-import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { NotifyForm } from "./NotifyForm";
 import { HashRouter, Route, Routes } from "react-router-dom";
