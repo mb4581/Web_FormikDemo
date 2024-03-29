@@ -5,8 +5,8 @@
     td:first-child,
     th:first-child {
       position: sticky!important;
-      left: 0;
       z-index: 2!important;
+      left: 0;
       max-width: 200px;
     }
   }
