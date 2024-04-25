@@ -1,11 +1,9 @@
 import "./index.scss";
-import { HistoryRow } from "./Types.ts";
-import { API_URL } from "../Config.ts";
-import { Button, Container, Table } from "react-bootstrap";
-import { useServerHistory } from "./DataProvider.ts";
-import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import { restrictToHorizontalAxis } from '@dnd-kit/modifiers'
-import { notifyListColumns } from "./react_table_trash/columnHelper.ts";
+import {HistoryRow} from "./Types.ts";
+import {Button, Container, Table} from "react-bootstrap";
+import {getCoreRowModel, useReactTable} from "@tanstack/react-table";
+import {restrictToHorizontalAxis} from '@dnd-kit/modifiers'
+import {notifyListColumns} from "./react_table_trash/columnHelper.ts";
 import React from "react";
 import {
   closestCenter,
@@ -17,18 +15,21 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
-import { arrayMove, horizontalListSortingStrategy, SortableContext } from "@dnd-kit/sortable";
-import { DraggableHistoryTableHeader } from "./react_table_trash/DraggableHistoryTableHeader.tsx";
-import { DragAlongHistoryRowCell } from "./react_table_trash/DragAlongHistoryRowCell.tsx";
+import {arrayMove, horizontalListSortingStrategy, SortableContext} from "@dnd-kit/sortable";
+import {DraggableHistoryTableHeader} from "./react_table_trash/DraggableHistoryTableHeader.tsx";
+import {DragAlongHistoryRowCell} from "./react_table_trash/DragAlongHistoryRowCell.tsx";
+import {useDeleteHistoryItemMutation, useServerHistoryQuery} from "../API.ts";
 
 export function NotifyList() {
-  const [data, reloadData] = useServerHistory();
+  const { data, error, isLoading } = useServerHistoryQuery();
+  const [deleteItem, {isLoading: isDeleting}] = useDeleteHistoryItemMutation();
+
   const [columnOrder, setColumnOrder] = React.useState<string[]>(() =>
     notifyListColumns.map(c => c.id!)
   );
 
   const table = useReactTable<HistoryRow>({
-    data: data ?? [],
+    data: data?.history ?? [],
     state: {
       columnOrder,
     },
@@ -36,19 +37,6 @@ export function NotifyList() {
     columns: notifyListColumns,
     getCoreRowModel: getCoreRowModel(),
   });
-
-  /**
-   * Delete item button callback
-   * @param id
-   */
-  async function deleteItem(id: string): Promise<void> {
-    const result = await fetch(`${API_URL}/api/history/${id}`, {
-      method: "DELETE",
-    });
-    if(result.status != 200)
-      return alert("Failed to delete");
-    reloadData();
-  }
 
   /**
    * Called after column DnD
@@ -71,10 +59,8 @@ export function NotifyList() {
     useSensor(KeyboardSensor, {})
   )
 
-
-  if(!data) return (
-    <p>Loading...</p>
-  );
+  if(isLoading) return (<p>Loading...</p>);
+  if(error) return (<p>Error: {JSON.stringify(error)}</p>)
 
   return (
     <Container style={{paddingTop: 32}}>
@@ -113,7 +99,7 @@ export function NotifyList() {
                 </SortableContext>
               ))}
               <td>
-                <Button variant="danger" size="sm" onClick={() => deleteItem(row.id)}>
+                <Button variant="danger" size="sm" onClick={() => deleteItem(row.original.id)} disabled={isDeleting}>
                   Delete
                 </Button>
               </td>
