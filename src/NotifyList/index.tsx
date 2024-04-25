@@ -19,8 +19,9 @@ import {arrayMove, horizontalListSortingStrategy, SortableContext} from "@dnd-ki
 import {DraggableHistoryTableHeader} from "./react_table_trash/DraggableHistoryTableHeader.tsx";
 import {DragAlongHistoryRowCell} from "./react_table_trash/DragAlongHistoryRowCell.tsx";
 import {useDeleteHistoryItemMutation, useServerHistoryQuery} from "../API.ts";
+import {SpinnerBlock} from "../SpinnerBlock";
 
-export function NotifyList() {
+export default function NotifyList() {
   const { data, error, isLoading } = useServerHistoryQuery();
   const [deleteItem, {isLoading: isDeleting}] = useDeleteHistoryItemMutation();
 
@@ -59,7 +60,7 @@ export function NotifyList() {
     useSensor(KeyboardSensor, {})
   )
 
-  if(isLoading) return (<p>Loading...</p>);
+  if(isLoading) return (<SpinnerBlock />);
   if(error) return (<p>Error: {JSON.stringify(error)}</p>)
 
   return (

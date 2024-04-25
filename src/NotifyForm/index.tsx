@@ -8,7 +8,7 @@ const INITIAL_VALUES: NotifyFormData = {
   message: "",
 }
 
-export function NotifyForm() {
+export default function NotifyForm() {
   const [addNotification, {
     isLoading,
     data: addedRow,
